@@ -64,12 +64,10 @@ openerp.web.ListView.include({
     $('.oe_list_content').find('thead').css('visibility', 'hidden');
     this.first_scroll = true;
   },
-    header_is_in_scroll: function(){
-      var head = this.get_original_headers();
-      var frame = $('.oe_view_manager_body');
-
-      var hidden = frame.scrollTop();
-
-      return (hidden < head.height());
-    },
-  });
+  header_is_in_scroll: function(){
+    var head = this.get_original_headers();
+    var frame = $('.oe_view_manager_body');
+    var hidden = frame.scrollTop();
+    return (hidden < head.height());
+  },
+});
