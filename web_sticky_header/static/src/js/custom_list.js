@@ -1,4 +1,7 @@
 openerp.web.ListView.include({
+  /**
+   * Override all list view to add sticky header behavior
+   **/
   init: function(parent, dataset, view_id, options) {
     var self = this;
     this._super(parent, dataset, view_id, options);
@@ -6,6 +9,10 @@ openerp.web.ListView.include({
   },
 
   do_show: function(post_function){
+    /**
+     * Move search div to a fixed location.
+     * Add scroll event listener and remove leftover headers
+     **/
     this._super();
     self = this;
     self.delete_fix_headers();
@@ -15,6 +22,9 @@ openerp.web.ListView.include({
   },
 
   delete_fix_headers: function(){
+    /**
+     * Delete the sticky header created by `do_fixed_header`
+     **/
     if ($('.oe_list_content_containers_custom').length > 0){
       $('.oe_list_content_containers_custom').remove();
     };
@@ -23,14 +33,20 @@ openerp.web.ListView.include({
   },
 
   get_original_headers: function(){
+    /**
+     * Get original table header element of list view
+     **/
     return original_headers = $(
         $('.oe_list_content').children()[0]
         );
   },
 
   do_fixed_headers: function(){
+    /**
+     * Copy actual header without event listener
+     * and set a suitable position in layout
+     **/
     if ($('.oe_view_manager_body').scrollTop() === 0){
-    // if (this.header_is_visible()){
       this.delete_fix_headers();
       return;
     };
@@ -65,9 +81,13 @@ openerp.web.ListView.include({
     this.first_scroll = true;
   },
   header_is_in_scroll: function(){
-    var head = this.get_original_headers();
-    var frame = $('.oe_view_manager_body');
-    var hidden = frame.scrollTop();
-    return (hidden < head.height());
+    /**
+    *Helper that tells if original table header is visible.
+    *It is not use yet but available for more advance dev
+    *var head = this.get_original_headers();
+    *var frame = $('.oe_view_manager_body');
+    *var hidden = frame.scrollTop();
+    *return (hidden < head.height());
+    **/
   },
 });
