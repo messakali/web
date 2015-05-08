@@ -16,14 +16,14 @@ openerp.web.ListView.include({
     this._super();
     self = this;
     self.delete_fix_headers();
-    $('.oe_view_manager_body').on('scroll', self.do_fixed_headers);
+    $('.oe_view_manager_body').on('scroll', self.do_sticky_headers);
     var search_div = $('.oe_searchview_drawer_container').detach();
     $('.oe_view_manager_header').after(search_div)
   },
 
   delete_fix_headers: function(){
     /**
-     * Delete the sticky header created by `do_fixed_header`
+     * Delete the sticky header created by `do_sticky_header`
      **/
     if ($('.oe_list_content_containers_custom').length > 0){
       $('.oe_list_content_containers_custom').remove();
@@ -41,7 +41,7 @@ openerp.web.ListView.include({
         );
   },
 
-  do_fixed_headers: function(){
+  do_sticky_headers: function(){
     /**
      * Copy actual header without event listener
      * and set a suitable position in layout
@@ -53,11 +53,11 @@ openerp.web.ListView.include({
     if (this.first_scroll){
       return;
     };
-    var fixed_headers_containers = $(document.createElement('div'));
-    var fixed_headers = $(document.createElement('table'));
-    fixed_headers_containers.addClass('oe_list_content_containers_custom');
-    fixed_headers_containers.append(fixed_headers);
-    fixed_headers.width($('.oe_list_content').width());
+    var sticky_headers_containers = $(document.createElement('div'));
+    var sticky_headers = $(document.createElement('table'));
+    sticky_headers_containers.addClass('oe_list_content_containers_custom');
+    sticky_headers_containers.append(sticky_headers);
+    sticky_headers.width($('.oe_list_content').width());
     var original_headers = this.get_original_headers();
     var headers_copy = original_headers.clone();
     jQuery.map(headers_copy.find('div'), function(el, i){
@@ -73,10 +73,10 @@ openerp.web.ListView.include({
       $(el).width($(original_headers.find('th')[i]).width());
       $(el).height($(original_headers.find('th')[i]).height());
     });
-    fixed_headers.append(headers_copy);
-    fixed_headers.addClass('oe_list_content_custom');
+    sticky_headers.append(headers_copy);
+    sticky_headers.addClass('oe_list_content_custom');
 
-    $('.oe_searchview_drawer_container').after(fixed_headers_containers);
+    $('.oe_searchview_drawer_container').after(sticky_headers_containers);
     $('.oe_list_content').find('thead').css('visibility', 'hidden');
     this.first_scroll = true;
   },
