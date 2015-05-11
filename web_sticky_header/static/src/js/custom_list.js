@@ -5,20 +5,43 @@ openerp.web.ListView.include({
   init: function(parent, dataset, view_id, options) {
     var self = this;
     this._super(parent, dataset, view_id, options);
-    this.first_scroll = false;
   },
 
-  do_show: function(post_function){
+  do_show: function(){
     /**
      * Move search div to a fixed location.
      * Add scroll event listener and remove leftover headers
      **/
     this._super();
+    $('.oe_view_manager_body').slice(1).remove();
+    $('.oe_view_manager_body').off('scroll.sticky_header');
     self = this;
     self.delete_fix_headers();
-    $('.oe_view_manager_body').on('scroll', self.do_sticky_headers);
+    var event_set = false;
+    // we avoid to have the listener attach many time on scroll bar
+    if ($._data($('.oe_view_manager_body')[0], 'events')){
+      even_set = $._data($('.oe_view_manager_body')[0], 'events').scroll.some(function(element, index, array) {
+        return element.namespace == 'sticky_header';
+      });
+    };
+    if (! event_set){
+      $('.oe_view_manager_body').on('scroll.sticky_header', self.do_sticky_headers);
+    };
     var search_div = $('.oe_searchview_drawer_container').detach();
-    $('.oe_view_manager_header').after(search_div)
+    $('.oe_view_manager_header').after(search_div);
+  },
+
+  do_hide: function(){
+
+    /**
+     * Move search div to a fixed location.
+     * Add scroll event listener and remove leftover headers
+     **/
+    self = this;
+    this._super();
+    self.delete_fix_headers();
+    $('.oe_view_manager_body').slice(1).remove();
+    $('.oe_view_manager_body').off('scroll.sticky_header');
   },
 
   delete_fix_headers: function(){
@@ -29,7 +52,6 @@ openerp.web.ListView.include({
       $('.oe_list_content_containers_custom').remove();
     };
     $('.oe_list_content').find('thead').css('visibility', 'visible');
-    this.first_scroll = false;
   },
 
   get_original_headers: function(){
@@ -50,7 +72,7 @@ openerp.web.ListView.include({
       this.delete_fix_headers();
       return;
     };
-    if (this.first_scroll){
+    if ($('.oe_list_content_containers_custom').length > 0) {
       return;
     };
     var sticky_headers_containers = $(document.createElement('div'));
@@ -78,16 +100,17 @@ openerp.web.ListView.include({
 
     $('.oe_searchview_drawer_container').after(sticky_headers_containers);
     $('.oe_list_content').find('thead').css('visibility', 'hidden');
-    this.first_scroll = true;
   },
-  header_is_in_scroll: function(){
-    /**
-    *Helper that tells if original table header is visible.
-    *It is not use yet but available for more advance dev
-    *var head = this.get_original_headers();
-    *var frame = $('.oe_view_manager_body');
-    *var hidden = frame.scrollTop();
-    *return (hidden < head.height());
-    **/
+});
+openerp.web.ViewManager.include({
+  /**
+   * Hack to prevent error that appear on addons list
+   * due to custom override that calls switch_mode mutliple times
+   * */
+  switch_mode: function (view_type, no_store, options) {
+    var res =  this._super(view_type, no_store, options);
+    $('.oe_view_manager_body').slice(1).remove();
+    $('.oe_view_manager_body').off('scroll.sticky_header');
   },
+  return res;
 });
