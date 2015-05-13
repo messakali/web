@@ -111,6 +111,6 @@ openerp.web.ViewManager.include({
     var res =  this._super(view_type, no_store, options);
     $('.oe_view_manager_body').slice(1).remove();
     $('.oe_view_manager_body').off('scroll.sticky_header');
+    return res;
   },
-  return res;
 });
